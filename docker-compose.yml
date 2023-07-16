@@ -1,0 +1,13 @@
+# docker compose run -p 8080:8080 --rm web
+# docker compose up web
+services:
+  web:
+    image: "to-do-app-sample"
+    ports:
+      - 8080:8080
+    volumes:
+      - "./to-do-app-sample:/home/to-do-app-sample/app"
+    working_dir: /home/to-do-app-sample/app
+    environment:
+      - GRADLE_USER_HOME=/home/to-do-app-sample/app/.gradle/caches
+    command: ["./gradlew", "run"]
