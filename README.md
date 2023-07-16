@@ -2,8 +2,8 @@
 
 # 試したいこと
 - [ ] Dockerで実行環境を作る
-- [ ] IntelliJ IDEA Communityを使って開発する
-- [ ] Kotlin + Spring boot + thymeleafを使ってWebアプリとして雑に実装する
+- [ ] ~IntelliJ IDEA Communityを使って開発する~
+- [ ] Kotlin + ~Spring boot + thymeleaf~ ktorを使ってWebアプリとして雑に実装する
 - [ ] SwaggerでRESTのレスポンスを定義する
 - [ ] RESTに対応する
 - [ ] gRPCに対応する
