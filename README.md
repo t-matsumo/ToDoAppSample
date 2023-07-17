@@ -18,6 +18,12 @@ or
 docker compose up web
 ```
 
+# auto reloadを有効にする
+実行中に、別のターミナルで以下を実行する。
+```sh
+docker compose exec web ./gradlew -t build -x test -i
+```
+
 # 確認方法
 localhost:8080をブラウザで開く。
 

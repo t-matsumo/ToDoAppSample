@@ -1,5 +1,6 @@
 # docker compose run -p 8080:8080 --rm web
 # docker compose up web
+# docker compose exec web ./gradlew -t build -x test -i
 services:
   web:
     image: "to-do-app-sample"
