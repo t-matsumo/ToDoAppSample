@@ -29,8 +29,8 @@ localhost:8080をブラウザで開く。
 
 # 試したいこと
 - [x] Dockerで実行環境を作る
-- [ ] ~IntelliJ IDEA Community~ Visual Studio Codeを使って開発する
-- [ ] Kotlin + ~Spring boot + thymeleaf~ ktorを使ってWebアプリとして雑に実装する
+- [x] IntelliJ IDEA Communityを使って開発する(Dockerの中で開発しようとしなければできる)
+- [ ] Kotlin + ktorを使ってWebアプリとして雑に実装する
 - [ ] SwaggerでRESTのレスポンスを定義する
 - [ ] RESTに対応する
 - [ ] gRPCに対応する
