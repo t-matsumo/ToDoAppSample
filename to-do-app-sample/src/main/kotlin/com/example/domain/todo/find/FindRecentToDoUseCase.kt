@@ -1,12 +1,11 @@
 package com.example.domain.todo.find
 
 import java.time.LocalDateTime
-import java.util.*
 
 data class FindRecentToDoRequest(val maxCount: Int)
 
 data class ToDo(
-    private val id: UUID,
+    private val id: String,
     val content: String,
     val createdAt: LocalDateTime
 )

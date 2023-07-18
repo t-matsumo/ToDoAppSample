@@ -1,16 +1,19 @@
 package com.example.domain.todo
 
 import java.time.LocalDateTime
-import java.util.UUID
 
 @JvmInline
-value class ToDoId(val value: UUID)
+value class ToDoId(val value: String)
 
 @JvmInline
 value class ToDoContent(val value: String)
 
 @JvmInline
 value class ToDoCreatedAt(val value: LocalDateTime): Comparable<ToDoCreatedAt> {
+    companion object {
+        fun now() = ToDoCreatedAt(LocalDateTime.now())
+    }
+
     override fun compareTo(other: ToDoCreatedAt) = this.value.compareTo(other.value)
 }
 
@@ -19,7 +22,11 @@ class Todo(
     private val content: ToDoContent,
     val createdAt: ToDoCreatedAt
 ) {
-    val idUUID = id.value
+    val idString = id.value
     val contentString = content.value
     val createdAtLocalDateTime = createdAt.value
+
+    fun updatedWith(content: ToDoContent): Todo {
+        return Todo(id, content, createdAt)
+    }
 }
