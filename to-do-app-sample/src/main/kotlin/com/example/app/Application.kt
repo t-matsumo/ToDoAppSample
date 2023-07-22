@@ -1,6 +1,7 @@
 package com.example.app
 
 import com.example.app.plugins.configureRouting
+import com.example.app.plugins.configureThymeleaf
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -11,5 +12,6 @@ fun main() {
 }
 
 fun Application.module() {
+    configureThymeleaf()
     configureRouting()
 }

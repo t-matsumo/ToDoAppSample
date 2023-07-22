@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ToDo List</title>
+</head>
+<body>
+    <h1>ToDo List</h1>
+
+    <h2>create todo</h2>
+    <form action="todos" method="post">
+        <label for="create-todo-form-title">title:</label>
+        <input id="create-todo-form-title" type="text" minlength="1" spellcheck="true" required>
+
+        <label for="create-todo-form-content">content:</label>
+        <input id="create-todo-form-content" type="text" minlength="1" spellcheck="true" required>
+
+        <button type="submit">create</button>
+    </form>
+
+    <h2>Recent todos</h2>
+    <article th:each="todo : ${model}">
+        <a th:href="@{todos/{todoId}(todoId=${todo.id})}">
+            <h3 th:text="${todo.title}">ToDo title</h3>
+            <p th:text="${todo.content}">ToDo content</p>
+        </a>
+        <menu>
+            <li>
+                <a th:href="@{todos/{todoId}/edit(todoId=${todo.id})}">edit</a>
+            </li>
+            <li>
+                <form th:action="@{todos/{todoId}/delete(todoId=${todo.id})}" method="post">
+                    <button type="submit">delete(apply immediately)</button>
+                </form>
+            </li>
+        </menu>
+    </article>
+</body>
+</html>

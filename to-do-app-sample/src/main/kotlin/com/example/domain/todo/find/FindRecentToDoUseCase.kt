@@ -1,14 +1,8 @@
 package com.example.domain.todo.find
 
-import java.time.LocalDateTime
+import com.example.domain.todo.find.response.ToDo
 
 data class FindRecentToDoRequest(val maxCount: Int)
-
-data class ToDo(
-    private val id: String,
-    val content: String,
-    val createdAt: LocalDateTime
-)
 
 data class FindRecentToDoResponse(val toDos: List<ToDo>)
 
