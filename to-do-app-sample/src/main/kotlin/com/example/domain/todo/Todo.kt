@@ -32,7 +32,7 @@ class Todo(
     val createdAtLocalDateTime = createdAt.value
 
 
-    fun updatedWith(content: ToDoContent): Todo {
+    fun updatedWith(title: ToDoTitle, content: ToDoContent): Todo {
         return Todo(id, title, content, createdAt)
     }
 }
