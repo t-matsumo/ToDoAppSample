@@ -1,9 +1,6 @@
 package com.example.domain.todo.register
 
-import com.example.domain.todo.ToDoContent
-import com.example.domain.todo.ToDoCreatedAt
-import com.example.domain.todo.ToDoRepository
-import com.example.domain.todo.Todo
+import com.example.domain.todo.*
 
 class RegisterToDoInteractor(
     private val toDoRepository: ToDoRepository
@@ -11,6 +8,7 @@ class RegisterToDoInteractor(
     override fun handle(request: RegisterToDoRequest) {
         val toDo = Todo(
             toDoRepository.nextId(),
+            ToDoTitle(request.title),
             ToDoContent(request.content),
             ToDoCreatedAt.now()
         )

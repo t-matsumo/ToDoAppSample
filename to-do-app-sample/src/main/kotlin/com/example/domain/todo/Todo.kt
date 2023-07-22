@@ -6,6 +6,9 @@ import java.time.LocalDateTime
 value class ToDoId(val value: String)
 
 @JvmInline
+value class ToDoTitle(val value: String)
+
+@JvmInline
 value class ToDoContent(val value: String)
 
 @JvmInline
@@ -19,14 +22,17 @@ value class ToDoCreatedAt(val value: LocalDateTime): Comparable<ToDoCreatedAt> {
 
 class Todo(
     val id: ToDoId,
+    private val title: ToDoTitle,
     private val content: ToDoContent,
     val createdAt: ToDoCreatedAt
 ) {
     val idString = id.value
+    val titleString = title.value
     val contentString = content.value
     val createdAtLocalDateTime = createdAt.value
 
+
     fun updatedWith(content: ToDoContent): Todo {
-        return Todo(id, content, createdAt)
+        return Todo(id, title, content, createdAt)
     }
 }

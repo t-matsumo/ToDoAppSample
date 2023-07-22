@@ -11,7 +11,7 @@ class ToDoRepositoryInMemory: ToDoRepository {
     init {
         val ids = List(12) { nextId() }
         for ((i, id) in ids.withIndex()) {
-            dataStore[id] = Todo(id, ToDoContent("content $i"), ToDoCreatedAt.now())
+            dataStore[id] = Todo(id, ToDoTitle("title $i"), ToDoContent("content $i"), ToDoCreatedAt.now())
         }
     }
 
