@@ -1,4 +1,4 @@
-package com.example.app.plugins
+package com.example.web.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.thymeleaf.*
