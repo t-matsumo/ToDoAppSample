@@ -1,7 +1,8 @@
-package com.example.app
+package com.example.web
 
-import com.example.app.plugins.configureRouting
-import com.example.app.plugins.configureThymeleaf
+import com.example.web.plugins.configureAuthentication
+import com.example.web.plugins.configureRouting
+import com.example.web.plugins.configureThymeleaf
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -12,6 +13,7 @@ fun main() {
 }
 
 fun Application.module() {
+    configureAuthentication()
     configureThymeleaf()
     configureRouting()
 }
