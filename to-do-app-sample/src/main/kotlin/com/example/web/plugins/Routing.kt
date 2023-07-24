@@ -19,8 +19,8 @@ fun Application.configureRouting() {
         }
         authenticate("auth-form") {
             post("sign-in") {
-                val userName = call.principal<UserIdPrincipal>()?.name.toString()
-                call.sessions.set(UserSession(name = userName, count = 1))
+                val memberId = call.principal<UserIdPrincipal>()?.name.toString()
+                call.sessions.set(UserSession(memberId, count = 1))
                 call.respondRedirect("/todos")
             }
         }

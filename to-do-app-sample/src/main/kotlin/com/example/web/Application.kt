@@ -1,5 +1,8 @@
 package com.example.web
 
+import com.example.domain.security.authenticate.AuthenticateInteractor
+import com.example.domain.security.authenticate.MemberRepository
+import com.example.infrastructure.MemberRepositoryInMemory
 import com.example.web.plugins.configureAuthentication
 import com.example.web.plugins.configureRouting
 import com.example.web.plugins.configureThymeleaf
@@ -13,7 +16,7 @@ fun main() {
 }
 
 fun Application.module() {
-    configureAuthentication()
+    configureAuthentication(AuthenticateInteractor(MemberRepositoryInMemory()))
     configureThymeleaf()
     configureRouting()
 }
