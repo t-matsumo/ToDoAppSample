@@ -1,4 +1,4 @@
-package com.example.domain.security.authenticate
+package com.example.security
 
 class AuthenticateInteractor(private val memberRepository: MemberRepository): AuthenticateUseCase {
     override fun handle(request: AuthenticateRequest): AuthenticateResponse {

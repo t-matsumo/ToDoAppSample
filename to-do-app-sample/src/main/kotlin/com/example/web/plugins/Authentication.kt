@@ -1,7 +1,7 @@
 package com.example.web.plugins
 
-import com.example.domain.security.authenticate.AuthenticateRequest
-import com.example.domain.security.authenticate.AuthenticateUseCase
+import com.example.security.AuthenticateRequest
+import com.example.security.AuthenticateUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
