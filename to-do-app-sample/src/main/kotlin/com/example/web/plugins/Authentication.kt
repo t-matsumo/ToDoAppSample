@@ -1,5 +1,7 @@
 package com.example.web.plugins
 
+import com.example.domain.security.authenticate.AuthenticateRequest
+import com.example.domain.security.authenticate.AuthenticateUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -7,13 +9,13 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 
-data class UserSession(val name: String, val count: Int) : Principal
+data class UserSession(val memberId: String) : Principal
 
-fun Application.configureAuthentication() {
+fun Application.configureAuthentication(authenticateUseCase: AuthenticateUseCase) {
     install(Sessions) {
-        cookie<UserSession>("user_session") {
+        cookie<UserSession>("user_session", SessionStorageMemory()) {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60
+            cookie.maxAgeInSeconds = 60 * 60
             // cookie.secure = true
             cookie.extensions["SameSite"] = "strict"
         }
@@ -23,11 +25,13 @@ fun Application.configureAuthentication() {
             userParamName = "username"
             passwordParamName = "password"
             validate { credentials ->
-                if (credentials.name == "admin" && credentials.password == "password") {
-                    UserIdPrincipal(credentials.name)
-                } else {
-                    null
-                }
+                authenticateUseCase
+                    .handle(AuthenticateRequest(credentials.name, credentials.password))
+                    .result
+                    .fold(
+                        onSuccess = { UserIdPrincipal(it.value) },
+                        onFailure = { null }
+                    )
             }
             challenge {
                 call.respond(HttpStatusCode.Unauthorized, "Credentials are not valid")
@@ -35,11 +39,7 @@ fun Application.configureAuthentication() {
         }
         session<UserSession>("auth-session") {
             validate { session ->
-                if(session.name.startsWith("admin")) {
-                    session
-                } else {
-                    null
-                }
+                 session
             }
             challenge {
                 call.respondRedirect("/sign-in")
