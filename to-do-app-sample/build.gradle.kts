@@ -29,6 +29,9 @@ dependencies {
 
     implementation("io.ktor:ktor-server-auth:$ktor_version")
 
+    implementation("org.springframework.security:spring-security-crypto:6.1.2")
+    implementation("commons-logging:commons-logging:1.2")
+
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.slf4j:slf4j-simple:2.0.5")
 

@@ -1,7 +1,7 @@
 package com.example.web.plugins
 
-import com.example.security.AuthenticateRequest
-import com.example.security.AuthenticateUseCase
+import com.example.domain.security.authenticate.AuthenticateRequest
+import com.example.domain.security.authenticate.AuthenticateUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -9,13 +9,13 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 
-data class UserSession(val memberId: String, val count: Int) : Principal
+data class UserSession(val memberId: String) : Principal
 
 fun Application.configureAuthentication(authenticateUseCase: AuthenticateUseCase) {
     install(Sessions) {
         cookie<UserSession>("user_session", SessionStorageMemory()) {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60
+            cookie.maxAgeInSeconds = 60 * 60
             // cookie.secure = true
             cookie.extensions["SameSite"] = "strict"
         }

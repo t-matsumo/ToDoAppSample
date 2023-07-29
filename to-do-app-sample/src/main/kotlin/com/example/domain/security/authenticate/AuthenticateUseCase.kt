@@ -1,4 +1,6 @@
-package com.example.security
+package com.example.domain.security.authenticate
+
+import com.example.domain.security.Id
 
 class AuthenticateNoSuchMemberException: NoSuchElementException()
 

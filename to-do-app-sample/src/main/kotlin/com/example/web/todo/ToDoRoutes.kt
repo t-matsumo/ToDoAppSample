@@ -8,7 +8,8 @@ import com.example.domain.todo.register.RegisterToDoInteractor
 import com.example.domain.todo.register.RegisterToDoRequest
 import com.example.domain.todo.update.UpdateToDoInteractor
 import com.example.domain.todo.update.UpdateToDoRequest
-import com.example.infrastructure.ToDoRepositoryInMemory
+import com.example.infrastructure.InMemoryFindRecentToDoQuery
+import com.example.web.plugins.UserSession
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -19,33 +20,35 @@ import io.ktor.server.thymeleaf.*
 
 data class ToDoViewData(val id: String, val title: String, val content: String)
 
-fun Application.toDoRoutes() {
-    val toDoRepository: ToDoRepository = ToDoRepositoryInMemory()
-
+fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
+    val registerToDoUseCase = RegisterToDoInteractor(toDoRepository)
+    val findRecentToDoUseCase = FindRecentToDoInteractor(InMemoryFindRecentToDoQuery())
     routing {
         authenticate("auth-session") {
-//            val userSession = call.principal<UserSession>()
-//            call.sessions.set(userSession?.copy(count = userSession.count + 1))
-//            call.respondText("Hello, ${userSession?.name}! Visit count is ${userSession?.count}.")
             val rootPathName = "/todos"
             route(rootPathName) {
+
                 post {
                     val formParameters = call.receiveParameters()
                     val title = formParameters["title"]
                     val content = formParameters["content"]
-                    if (title == null || content == null) {
+                    val memberId = call.principal<UserSession>()?.memberId
+                    if (title == null || content == null || memberId == null) {
                         call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
                         return@post
                     }
 
-                    val registerToDoUseCase = RegisterToDoInteractor(toDoRepository)
-                    registerToDoUseCase.handle(RegisterToDoRequest(title, content))
+                    registerToDoUseCase.handle(RegisterToDoRequest(memberId, title, content))
 
                     call.respondRedirect(rootPathName)
                 }
                 get {
-                    val findRecentToDoUseCase = FindRecentToDoInteractor(toDoRepository)
-                    val response = findRecentToDoUseCase.handle(FindRecentToDoRequest(10))
+                    val memberId = call.principal<UserSession>()?.memberId
+                    if (memberId == null) {
+                        call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
+                        return@get
+                    }
+                    val response = findRecentToDoUseCase.handle(FindRecentToDoRequest(memberId, 10))
 
                     val toDoViewDataList = response.toDos.map { ToDoViewData(it.id, it.title, it.content) }
                     call.respond(ThymeleafContent("todo-list", mapOf("toDoViewDataList" to toDoViewDataList)))
