@@ -3,7 +3,7 @@ package com.example.domain.todo
 import java.time.LocalDateTime
 
 @JvmInline
-value class ToDoId(val value: String) {
+value class Id(val value: String) {
     init {
         require(value.isNotEmpty())
     }
@@ -28,12 +28,9 @@ value class ToDoCreatedAt(val value: LocalDateTime): Comparable<ToDoCreatedAt> {
     override fun compareTo(other: ToDoCreatedAt) = this.value.compareTo(other.value)
 }
 
-@JvmInline
-value class AuthorId(val value: String)
-
-class Todo(
-    val id: ToDoId,
-    val authorId: AuthorId,
+data class Todo(
+    val id: Id,
+    val operatorId: OperatorId,
     val title: ToDoTitle,
     val content: ToDoContent,
     val createdAt: ToDoCreatedAt
@@ -43,11 +40,7 @@ class Todo(
     val contentString = content.value
     val createdAtLocalDateTime = createdAt.value
 
-    fun updatedWith(title: ToDoTitle, content: ToDoContent): Todo {
-        return Todo(id, authorId, title, content, createdAt)
-    }
-
-    fun canBeDeleted(authorId: AuthorId): Boolean {
-        return this.authorId == authorId
+    fun updatedWith(toDoTitle: ToDoTitle, toDoContent: ToDoContent): Todo {
+        return this.copy(title = toDoTitle, content = toDoContent)
     }
 }

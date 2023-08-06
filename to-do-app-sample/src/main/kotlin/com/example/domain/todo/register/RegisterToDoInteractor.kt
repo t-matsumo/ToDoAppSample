@@ -8,7 +8,7 @@ class RegisterToDoInteractor(
     override fun handle(request: RegisterToDoRequest) {
         val toDo = Todo(
             toDoRepository.nextId(),
-            AuthorId(request.memberId),
+            OperatorId(request.memberId),
             ToDoTitle(request.title),
             ToDoContent(request.content),
             ToDoCreatedAt.now()

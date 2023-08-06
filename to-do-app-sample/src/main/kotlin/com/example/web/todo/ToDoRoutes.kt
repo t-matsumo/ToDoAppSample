@@ -41,7 +41,6 @@ fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
                     }
 
                     registerToDoUseCase.handle(RegisterToDoRequest(memberId, title, content))
-
                     call.respondRedirect(rootPathName)
                 }
                 get {
@@ -56,17 +55,17 @@ fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
                     call.respond(ThymeleafContent("todo-list", mapOf("toDoViewDataList" to toDoViewDataList)))
                 }
                 get("/{toDoId}") {
+                    val memberId = call.principal<UserSession>()?.memberId
                     val toDoId = call.parameters["toDoId"]
-                    if (toDoId == null) {
+                    if (toDoId == null || memberId == null) {
                         call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
                         return@get
                     }
 
                     val findToDoByIdUseCase = FindToDoByIdInteractor(toDoRepository)
                     val toDo = findToDoByIdUseCase
-                        .handle(FindToDoByIdRequest(toDoId))
+                        .handle(FindToDoByIdRequest(memberId, toDoId))
                         .toDo
-                        .getOrNull()
                     if (toDo == null) {
                         call.respond(HttpStatusCode.NotFound, HttpStatusCode.NotFound.toString())
                         return@get
@@ -75,17 +74,17 @@ fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
                     call.respond(ThymeleafContent("todo", mapOf("model" to toDo)))
                 }
                 get("/{toDoId}/edit") {
+                    val memberId = call.principal<UserSession>()?.memberId
                     val toDoId = call.parameters["toDoId"]
-                    if (toDoId == null) {
+                    if (toDoId == null || memberId == null) {
                         call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
                         return@get
                     }
 
                     val findToDoByIdUseCase = FindToDoByIdInteractor(toDoRepository)
                     val toDo = findToDoByIdUseCase
-                        .handle(FindToDoByIdRequest(toDoId))
+                        .handle(FindToDoByIdRequest(memberId, toDoId))
                         .toDo
-                        .getOrNull()
                     if (toDo == null) {
                         call.respond(HttpStatusCode.NotFound, HttpStatusCode.NotFound.toString())
                         return@get
@@ -94,17 +93,18 @@ fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
                     call.respond(ThymeleafContent("todo-edit", mapOf("model" to toDo)))
                 }
                 post("/{toDoId}") {
+                    val memberId = call.principal<UserSession>()?.memberId
                     val toDoId = call.parameters["toDoId"]
                     val formParameters = call.receiveParameters()
                     val title = formParameters["title"]
                     val content = formParameters["content"]
-                    if (toDoId == null || title == null || content == null) {
+                    if (toDoId == null || title == null || content == null || memberId == null) {
                         call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
                         return@post
                     }
 
                     val updateToDoUseCase = UpdateToDoInteractor(toDoRepository)
-                    updateToDoUseCase.handle(UpdateToDoRequest(toDoId, title, content))
+                    updateToDoUseCase.handle(UpdateToDoRequest(memberId, toDoId, title, content))
 
                     call.respondRedirect(rootPathName)
                 }

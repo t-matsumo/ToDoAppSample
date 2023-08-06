@@ -1,8 +1,6 @@
 package com.example.domain.todo.find
 
-import com.example.domain.todo.AuthorId
-import com.example.domain.todo.ToDoRepository
-import com.example.domain.todo.Todo
+import com.example.domain.todo.*
 import com.example.domain.todo.find.response.ToDo
 
 class FindRecentToDoInteractor(
@@ -11,7 +9,8 @@ class FindRecentToDoInteractor(
     private val toDoFinder = ToDoFinder(findRecentToDoQuery)
 
     override fun handle(request: FindRecentToDoRequest): FindRecentToDoResponse {
-        return toDoFinder.findRecentToDo(AuthorId(request.memberId), request.maxCount)
+        val operator = Operator(OperatorId(request.memberId))
+        return toDoFinder.findRecentToDoBy(operator, request.maxCount)
             .map {
                 ToDo(
                     it.idString,
@@ -19,8 +18,7 @@ class FindRecentToDoInteractor(
                     it.contentString,
                     it.createdAtLocalDateTime
                 )
-            }.let {
-                FindRecentToDoResponse(it)
             }
+            .let { FindRecentToDoResponse(it) }
     }
 }

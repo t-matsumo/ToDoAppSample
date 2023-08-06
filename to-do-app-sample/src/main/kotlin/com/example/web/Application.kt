@@ -40,7 +40,7 @@ fun Application.module() {
     }
 
     for (i in 0..30) {
-        toDoRepository.save(Todo(toDoRepository.nextId(), AuthorId(adminCredential.id.value), ToDoTitle("title $i for ${adminCredential.name.value}"), ToDoContent("content $i"), ToDoCreatedAt.now()))
+        toDoRepository.save(Todo(toDoRepository.nextId(), OperatorId(adminCredential.id.value), ToDoTitle("title $i for ${adminCredential.name.value}"), ToDoContent("content $i"), ToDoCreatedAt.now()))
     }
 
     for (credential in userCredentials) {
@@ -48,7 +48,7 @@ fun Application.module() {
             toDoRepository.save(
                 Todo(
                     toDoRepository.nextId(),
-                    AuthorId(credential.id.value),
+                    OperatorId(credential.id.value),
                     ToDoTitle("title $i for ${credential.name.value}"),
                     ToDoContent("content $i"),
                     ToDoCreatedAt.now()
