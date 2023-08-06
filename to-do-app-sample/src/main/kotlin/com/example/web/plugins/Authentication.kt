@@ -27,11 +27,8 @@ fun Application.configureAuthentication(authenticateUseCase: AuthenticateUseCase
             validate { credentials ->
                 authenticateUseCase
                     .handle(AuthenticateRequest(credentials.name, credentials.password))
-                    .result
-                    .fold(
-                        onSuccess = { UserIdPrincipal(it.value) },
-                        onFailure = { null }
-                    )
+                    .id
+                    ?.let { UserIdPrincipal(it) }
             }
             challenge {
                 call.respond(HttpStatusCode.Unauthorized, "Credentials are not valid")

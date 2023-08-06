@@ -46,4 +46,8 @@ class Todo(
     fun updatedWith(title: ToDoTitle, content: ToDoContent): Todo {
         return Todo(id, authorId, title, content, createdAt)
     }
+
+    fun canBeDeleted(authorId: AuthorId): Boolean {
+        return this.authorId == authorId
+    }
 }

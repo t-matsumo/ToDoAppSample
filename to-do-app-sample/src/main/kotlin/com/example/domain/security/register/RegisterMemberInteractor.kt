@@ -8,14 +8,19 @@ class RegisterMemberInteractor(
 ): RegisterMemberUseCase {
     private val credentialService = CredentialService(credentialRepository, passwordEncoder)
 
-    override fun handle(request: RegisterMemberRequest) {
+    override fun handle(request: RegisterMemberRequest): RegisterMemberResponse {
         val credential = Credential(
-            Id(request.name),
+            credentialRepository.nextId(),
+            Name(request.name),
             passwordEncoder.encode(Password(request.password))
         )
 
-        if (credentialService.canRegister(credential)) {
-            credentialRepository.save(credential)
+        if (!credentialService.canRegister(credential)) {
+            // 今のところこれしかないので手抜き
+            return Failure(NameShouldBeUniqueFailure)
         }
+
+        credentialRepository.save(credential)
+        return Success
     }
 }

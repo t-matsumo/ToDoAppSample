@@ -9,11 +9,7 @@ class AuthenticateInteractor(
     private val credentialService = CredentialService(credentialRepository, passwordEncoder)
 
     override fun handle(request: AuthenticateRequest): AuthenticateResponse {
-        val requestCredential = RequestCredential(Id(request.name), Password(request.password))
-        return credentialService.authenticate(requestCredential)
-            .fold(
-                onSuccess = { Result.success(it) },
-                onFailure = { Result.failure(AuthenticateNoSuchMemberException()) }
-            ).let { AuthenticateResponse(it) }
+        val requestCredential = RequestCredential(Name(request.name), Password(request.password))
+        return AuthenticateResponse(credentialService.authenticate(requestCredential)?.value)
     }
 }
