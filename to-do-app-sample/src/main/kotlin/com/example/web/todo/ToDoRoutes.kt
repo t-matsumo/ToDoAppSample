@@ -23,6 +23,8 @@ data class ToDoViewData(val id: String, val title: String, val content: String)
 fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
     val registerToDoUseCase = RegisterToDoInteractor(toDoRepository)
     val findRecentToDoUseCase = FindRecentToDoInteractor(InMemoryFindRecentToDoQuery())
+    val deleteToDoUseCase = DeleteToDoInteractor(toDoRepository)
+
     routing {
         authenticate("auth-session") {
             val rootPathName = "/todos"
@@ -107,14 +109,14 @@ fun Application.toDoRoutes(toDoRepository: ToDoRepository) {
                     call.respondRedirect(rootPathName)
                 }
                 post("/{toDoId}/delete") {
+                    val memberId = call.principal<UserSession>()?.memberId
                     val toDoId = call.parameters["toDoId"]
-                    if (toDoId == null) {
+                    if (toDoId == null || memberId == null) {
                         call.respond(HttpStatusCode.BadRequest, HttpStatusCode.BadRequest.toString())
                         return@post
                     }
 
-                    val deleteToDoUseCase = DeleteToDoInteractor(toDoRepository)
-                    deleteToDoUseCase.handle(DeleteToDoRequest(toDoId))
+                    deleteToDoUseCase.handle(DeleteToDoRequest(memberId, toDoId))
                     call.respondRedirect(rootPathName)
                 }
             }

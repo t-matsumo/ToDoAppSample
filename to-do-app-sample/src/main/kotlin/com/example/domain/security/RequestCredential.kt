@@ -7,4 +7,4 @@ value class Password(val value: String) {
     }
 }
 
-class RequestCredential(val id: Id, val password: Password)
+class RequestCredential(val name: Name, val password: Password)
