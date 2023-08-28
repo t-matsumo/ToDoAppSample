@@ -1,12 +1,16 @@
 package com.example.web
 
-import com.example.domain.security.*
-import com.example.domain.security.authenticate.AuthenticateInteractor
+import com.example.application.repository.ToDoRepository
+import com.example.application.usecase.security.authenticate.AuthenticateInteractor
+import com.example.domain.security.credential.Credential
+import com.example.domain.security.credential.Name
+import com.example.domain.security.authenticaterequest.Password
 import com.example.domain.todo.*
-import com.example.infrastructure.CredentialRepositoryInMemory
+import com.example.infrastructure.inmemory.CredentialRepositoryInMemory
 import com.example.infrastructure.SpringSecurityPasswordEncoder
-import com.example.infrastructure.ToDoRepositoryInMemory
+import com.example.infrastructure.inmemory.ToDoRepositoryInMemory
 import com.example.web.plugins.configureAuthentication
+import com.example.web.plugins.configureResources
 import com.example.web.plugins.configureRouting
 import com.example.web.plugins.configureThymeleaf
 import io.ktor.server.application.*
@@ -59,5 +63,6 @@ fun Application.module() {
 
     configureAuthentication(AuthenticateInteractor(credentialRepository, passwordEncoder))
     configureThymeleaf()
+    configureResources()
     configureRouting(toDoRepository)
 }

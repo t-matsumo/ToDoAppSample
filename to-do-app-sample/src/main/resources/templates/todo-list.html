@@ -20,7 +20,7 @@
 
     <h2>Recent todos</h2>
     <article th:each="todo : ${toDoViewDataList}">
-        <a th:href="@{todos/{todoId}(todoId=${todo.id})}">
+        <a th:href="@{todos/{id}(id=${todo.id})}">
             <h3 th:text="${todo.title}">ToDo title</h3>
             <p th:text="${todo.content}">ToDo content</p>
         </a>

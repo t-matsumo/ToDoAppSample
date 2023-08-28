@@ -1,5 +1,10 @@
 package com.example.domain.security
 
+import com.example.application.repository.CredentialRepository
+import com.example.domain.security.credential.Credential
+import com.example.domain.security.credential.Id
+import com.example.domain.security.authenticaterequest.AuthenticateRequest
+
 
 class CredentialService(
     private val credentialRepository: CredentialRepository,
@@ -9,7 +14,7 @@ class CredentialService(
         return credentialRepository.find(credential.name) == null
     }
 
-    fun authenticate(credential: RequestCredential): Id? {
+    fun authenticate(credential: AuthenticateRequest): Id? {
         return credentialRepository
             .find(credential.name)
             ?.let {
