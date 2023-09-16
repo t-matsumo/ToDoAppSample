@@ -1,7 +1,10 @@
 package com.example.web
 
+import com.example.application.repository.CredentialRepository
 import com.example.application.repository.ToDoRepository
 import com.example.application.usecase.security.authenticate.AuthenticateInteractor
+import com.example.application.usecase.security.register.RegisterMemberInteractor
+import com.example.application.usecase.security.register.RegisterMemberRequest
 import com.example.domain.security.credential.Credential
 import com.example.domain.security.credential.Name
 import com.example.domain.security.authenticaterequest.Password
@@ -29,24 +32,22 @@ fun Application.module() {
 
     val toDoRepository: ToDoRepository = ToDoRepositoryInMemory()
 
+    val registerMemberUseCase = RegisterMemberInteractor(credentialRepository, passwordEncoder)
+
     // fixture
-    val adminCredential = Credential(credentialRepository.nextId(), Name("admin"), passwordEncoder.encode(Password("password")))
-    val userCredentials = List(10) {
-        Credential(
-            credentialRepository.nextId(),
-            Name("user$it"),
-            passwordEncoder.encode(Password("Password$it"))
-        )
-    }
-    credentialRepository.save(adminCredential)
-    for (c in userCredentials) {
-        credentialRepository.save(c)
+    registerMemberUseCase.handle(RegisterMemberRequest("admin", "password"))
+    for (i in 0 until 10) {
+        registerMemberUseCase.handle(RegisterMemberRequest("user$i", "password$i"))
     }
 
     for (i in 0..30) {
+        val adminCredential = credentialRepository.find(Name("admin"))!!
         toDoRepository.save(Todo(toDoRepository.nextId(), OperatorId(adminCredential.id.value), ToDoTitle("title $i for ${adminCredential.name.value}"), ToDoContent("content $i"), ToDoCreatedAt.now()))
     }
 
+    val userCredentials = List(10) {
+        credentialRepository.find(Name("user$it"))!!
+    }
     for (credential in userCredentials) {
         for (i in 0..30) {
             toDoRepository.save(
@@ -61,8 +62,9 @@ fun Application.module() {
         }
     }
 
+
     configureAuthentication(AuthenticateInteractor(credentialRepository, passwordEncoder))
     configureThymeleaf()
     configureResources()
-    configureRouting(toDoRepository)
+    configureRouting(toDoRepository, registerMemberUseCase)
 }

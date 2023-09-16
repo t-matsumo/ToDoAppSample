@@ -7,6 +7,7 @@ import com.example.domain.security.credential.Credential
 import com.example.domain.security.credential.Id
 import com.example.domain.security.credential.Name
 import com.example.infrastructure.SpringSecurityPasswordEncoder
+import com.example.infrastructure.inmemory.CredentialRepositoryInMemory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -15,15 +16,15 @@ import java.util.*
 
 class CredentialServiceTest {
     private lateinit var credentialService: CredentialService
-    private lateinit var credentialRepositoryMock: CredentialRepositoryMock
+    private lateinit var credentialRepository: CredentialRepository
     private lateinit var passwordEncoder: PasswordEncoder
 
     @BeforeEach
     fun setup() {
-        credentialRepositoryMock = CredentialRepositoryMock()
+        credentialRepository = CredentialRepositoryInMemory(HashMap())
         passwordEncoder = SpringSecurityPasswordEncoder()
         credentialService = CredentialService(
-            credentialRepositoryMock,
+            credentialRepository,
             passwordEncoder
         )
     }
@@ -32,8 +33,6 @@ class CredentialServiceTest {
     inner class CanRegisterTest {
         @Test
         fun unique_name_can_be_registered() {
-            credentialRepositoryMock.findByNameResult = null
-
             val credential = Credential(
                 Id(UUID.randomUUID().toString()),
                 Name("name"),
@@ -45,19 +44,20 @@ class CredentialServiceTest {
 
         @Test
         fun duplicated_name_can_not_be_registered() {
-            credentialRepositoryMock.findByNameResult = Credential(
+            val credential = Credential(
                 Id(UUID.randomUUID().toString()),
                 Name("same_name"),
                 passwordEncoder.encode(Password("password"))
             )
+            credentialRepository.save(credential)
 
-            val credential = Credential(
+            val duplicatedNameCredential = Credential(
                 Id(UUID.randomUUID().toString()),
                 Name("same_name"),
                 passwordEncoder.encode(Password("other password"))
             )
 
-            Assertions.assertFalse(credentialService.canRegister(credential))
+            Assertions.assertFalse(credentialService.canRegister(duplicatedNameCredential))
         }
     }
 
@@ -65,11 +65,12 @@ class CredentialServiceTest {
     inner class AuthenticateTest {
         @Test
         fun given_registered_credential_then_return_Id() {
-            credentialRepositoryMock.findByNameResult = Credential(
+            val credential = Credential(
                 Id(UUID.randomUUID().toString()),
                 Name("name"),
                 passwordEncoder.encode(Password("password"))
             )
+            credentialRepository.save(credential)
 
             val request = AuthenticateRequest(Name("name"), Password("password"))
             Assertions.assertNotNull( credentialService.authenticate(request))
@@ -77,39 +78,21 @@ class CredentialServiceTest {
 
         @Test
         fun given_unregistered_name_then_return_null() {
-            credentialRepositoryMock.findByNameResult = null
-
             val request = AuthenticateRequest(Name("name"), Password("password"))
             Assertions.assertNull( credentialService.authenticate(request))
         }
 
         @Test
         fun given_wrong_password_then_return_null() {
-            credentialRepositoryMock.findByNameResult = Credential(
+            val credential = Credential(
                 Id(UUID.randomUUID().toString()),
                 Name("name"),
                 passwordEncoder.encode(Password("password"))
             )
+            credentialRepository.save(credential)
 
             val request = AuthenticateRequest(Name("name"), Password("wrong password"))
             Assertions.assertNull( credentialService.authenticate(request))
         }
     }
 }
-
-private class CredentialRepositoryMock: CredentialRepository {
-    var findByNameResult: Credential? = null
-
-    override fun nextId(): Id {
-        TODO("Not yet implemented")
-    }
-
-    override fun find(name: Name): Credential? {
-        return findByNameResult
-    }
-
-    override fun save(credential: Credential) {
-        TODO("Not yet implemented")
-    }
-}
-
